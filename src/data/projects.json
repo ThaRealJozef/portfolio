@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Malware Detection System",
+    "description": "A machine learning-based system for detecting malware using advanced algorithms and pattern recognition.",
+    "link": "https://github.com/tharealjozef/malwaredetectionsystem",
+    "languages": ["Python"],
+    "technologies": ["Machine Learning", "Cybersecurity", "Malware Detection"]
+  },
+  {
+    "name": "News Articles Website",
+    "description": "A collaborative university project for managing and displaying news articles with a modern interface.",
+    "link": "https://github.com/KaiBelmo/newsArticle",
+    "languages": ["JavaScript"],
+    "technologies": ["Web Development", "University Project"]
+  },
+  {
+    "name": "Recipes Android App",
+    "description": "A beautiful Android recipe application with modern Material Design UI and an Offline Database",
+    "link": "https://github.com/ThaRealJozef/RecipeApp",
+    "languages": ["Java"],
+    "technologies": ["Android", "Material Design", "Room Database"]
+  }
+]
