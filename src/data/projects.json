@@ -3,21 +3,57 @@
     "name": "Malware Detection System",
     "description": "A machine learning-based system for detecting malware using advanced algorithms and pattern recognition.",
     "link": "https://github.com/tharealjozef/malwaredetectionsystem",
-    "languages": ["Python"],
-    "technologies": ["Machine Learning", "Cybersecurity", "Malware Detection"]
+    "languages": [
+      "Python"
+    ],
+    "technologies": [
+      "Machine Learning",
+      "Cybersecurity",
+      "Malware Detection"
+    ]
   },
   {
     "name": "News Articles Website",
     "description": "A collaborative university project for managing and displaying news articles with a modern interface.",
     "link": "https://github.com/KaiBelmo/newsArticle",
-    "languages": ["JavaScript"],
-    "technologies": ["Web Development", "University Project"]
+    "languages": [
+      "JavaScript"
+    ],
+    "technologies": [
+      "Web Development",
+      "University Project"
+    ]
   },
   {
     "name": "Recipes Android App",
     "description": "A beautiful Android recipe application with modern Material Design UI and an Offline Database",
     "link": "https://github.com/ThaRealJozef/RecipeApp",
-    "languages": ["Java"],
-    "technologies": ["Android", "Material Design", "Room Database"]
+    "languages": [
+      "Java"
+    ],
+    "technologies": [
+      "Android",
+      "Material Design",
+      "Room Database"
+    ]
+  },
+  {
+    "name": "DimaVelo E-commerce Website",
+    "description": "A full-stack bicycle shop e-commerce platform with multilingual support, an admin dashboard, PWA features, and cloud-based product management.",
+    "link": "https://github.com/ThaRealJozef/DimaVelo",
+    "languages": [
+      "TypeScript"
+    ],
+    "technologies": [
+      "React 19",
+      "Vite",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "React Query",
+      "i18next",
+      "Firebase Authentication",
+      "Firestore Database",
+      "Cloud Image Hosting (IMGBB)"
+    ]
   }
 ]
