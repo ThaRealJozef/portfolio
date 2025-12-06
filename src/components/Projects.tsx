@@ -36,7 +36,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
             {project.description}
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4 relative z-10 pt-2 md:pt-4">
           <div className="flex flex-wrap gap-2">
             {project.languages.map((lang) => (
@@ -85,7 +85,7 @@ function Projects({ username }: ProjectsProps) {
               <span className="text-sm text-indigo-300">My Work</span>
             </div>
           </div>
-          
+
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
             Featured Projects
           </h2>
