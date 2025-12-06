@@ -1,104 +1,42 @@
-import { useEffect, useMemo, useState } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { type Container, type ISourceOptions } from "@tsparticles/engine";
-import { loadSlim } from "@tsparticles/slim";
-
+// Clean gradient mesh background - optimized for performance
+// No blur effects to prevent lag on scroll/hover
 export default function ParticlesBackground() {
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
-
-  const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log(container);
-  };
-
-  const options: ISourceOptions = useMemo(
-    () => ({
-      background: {
-        color: {
-          value: "transparent",
-        },
-      },
-      fpsLimit: 60, // Reduced from 120 for better performance
-      interactivity: {
-        events: {
-          onClick: {
-            enable: true,
-            mode: "push",
-          },
-          onHover: {
-            enable: true,
-            mode: "repulse",
-          },
-        },
-        modes: {
-          push: {
-            quantity: 2, // Reduced from 4
-          },
-          repulse: {
-            distance: 150, // Reduced from 200
-            duration: 0.3, // Reduced from 0.4
-          },
-        },
-      },
-      particles: {
-        color: {
-          value: ["#a78bfa", "#60a5fa"],
-        },
-        links: {
-          color: "#a78bfa",
-          distance: 150,
-          enable: true,
-          opacity: 0.2, // Reduced from 0.3
-          width: 1,
-        },
-        move: {
-          direction: "none",
-          enable: true,
-          outModes: {
-            default: "bounce",
-          },
-          random: false,
-          speed: 0.5, // Reduced from 1
-          straight: false,
-        },
-        number: {
-          density: {
-            enable: true,
-          },
-          value: 50, // Reduced from 80
-        },
-        opacity: {
-          value: 0.4, // Reduced from 0.5
-        },
-        shape: {
-          type: "circle",
-        },
-        size: {
-          value: { min: 1, max: 2 }, // Reduced from max: 3
-        },
-      },
-      detectRetina: true,
-    }),
-    [],
-  );
-
-  if (init) {
-    return (
-      <Particles
-        id="tsparticles"
-        particlesLoaded={particlesLoaded}
-        options={options}
-        className="absolute inset-0 z-0"
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Base gradient mesh - static, no animations */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 100% 60% at 10% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 90% 70%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 40% 90%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+            radial-gradient(ellipse 70% 50% at 70% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)
+          `
+        }}
       />
-    );
-  }
 
-  return null;
+      {/* Floating orbs - NO blur for performance */}
+      <div className="absolute top-[10%] left-[15%] w-[300px] h-[300px] bg-indigo-500/15 rounded-full animate-float-slow" />
+      <div className="absolute top-[60%] right-[10%] w-[250px] h-[250px] bg-cyan-500/12 rounded-full animate-float-slow animation-delay-2000" />
+      <div className="absolute bottom-[20%] left-[40%] w-[200px] h-[200px] bg-violet-500/10 rounded-full animate-float-slow animation-delay-4000" />
+
+      {/* Subtle grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px'
+        }}
+      />
+
+      {/* Accent glow spots - small so no performance hit */}
+      <div className="absolute top-[30%] right-[20%] w-2 h-2 bg-cyan-400/60 rounded-full animate-pulse" />
+      <div className="absolute top-[50%] left-[25%] w-1.5 h-1.5 bg-indigo-400/50 rounded-full animate-pulse animation-delay-2000" />
+      <div className="absolute bottom-[30%] right-[35%] w-1 h-1 bg-violet-400/40 rounded-full animate-pulse animation-delay-4000" />
+    </div>
+  );
 }

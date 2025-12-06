@@ -1,47 +1,69 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Home, FolderGit2, Wrench, GraduationCap, Mail } from 'lucide-react';
 
 interface HeaderProps {
   onNavigate: (sectionId: string) => void;
 }
 
-export default function Header({ onNavigate }: HeaderProps) {
+function Header({ onNavigate }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
+  // Detect which section is visible using IntersectionObserver
+  useEffect(() => {
+    const sections = ['home', 'projects', 'skills', 'education', 'contact'];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '-30% 0px -60% 0px',
+        threshold: 0
+      }
+    );
+
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Detect scroll for header background
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-
-      // Determine active section based on scroll position
-      const sections = ['home', 'projects', 'skills', 'education', 'contact'];
-      const scrollPosition = window.scrollY + 100;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
+      const snapContainer = document.querySelector('.snap-container');
+      const scrollTop = snapContainer ? snapContainer.scrollTop : window.scrollY;
+      setIsScrolled(scrollTop > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const snapContainer = document.querySelector('.snap-container');
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    snapContainer?.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      snapContainer?.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'education', label: 'Education' },
-    { id: 'contact', label: 'Contact' },
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'projects', label: 'Projects', icon: FolderGit2 },
+    { id: 'skills', label: 'Skills', icon: Wrench },
+    { id: 'education', label: 'Education', icon: GraduationCap },
+    { id: 'contact', label: 'Contact', icon: Mail },
   ];
 
   const handleNavClick = (sectionId: string) => {
@@ -51,122 +73,103 @@ export default function Header({ onNavigate }: HeaderProps) {
 
   return (
     <>
-      <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/50 shadow-lg shadow-indigo-500/5'
-            : 'bg-transparent'
-        }`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${isScrolled ? 'glass' : 'bg-transparent'
+          }`}
       >
         <nav className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo/Brand */}
-            <motion.div
-              className="flex items-center gap-2 cursor-none"
+            <div
+              className="flex items-center gap-3 cursor-pointer"
               onClick={() => handleNavClick('home')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">J</span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
-                ThaRealJozef
-              </span>
-            </motion.div>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+                  ThaRealJozef
+                </span>
+                <span className="text-[10px] text-gray-500 uppercase tracking-widest -mt-1">
+                  Developer
+                </span>
+              </div>
+            </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => (
-                <motion.div key={item.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
                   <Button
+                    key={item.id}
                     variant="ghost"
-                    className={`relative text-gray-300 hover:text-cyan-400 transition-colors cursor-none ${
-                      activeSection === item.id ? 'text-indigo-400' : ''
-                    }`}
+                    className={`relative px-4 py-2 text-sm transition-colors duration-150 ${activeSection === item.id
+                      ? 'text-cyan-400'
+                      : 'text-gray-400 hover:text-gray-200'
+                      }`}
                     onClick={() => handleNavClick(item.id)}
                   >
-                    {item.label}
+                    <span className="flex items-center gap-2">
+                      <Icon className="w-4 h-4" />
+                      {item.label}
+                    </span>
                     {activeSection === item.id && (
-                      <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-indigo-500"
-                        layoutId="activeSection"
-                        transition={{ duration: 0.3 }}
-                      />
+                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full" />
                     )}
                   </Button>
-                </motion.div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Mobile Menu Button */}
-            <motion.button
-              className="md:hidden text-gray-300 hover:text-cyan-400 p-2 cursor-none"
+            <button
+              className="md:hidden text-gray-300 hover:text-cyan-400 p-2 rounded-lg hover:bg-indigo-500/10 transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </motion.button>
+            </button>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {/* Backdrop */}
-            <motion.div
-              className="absolute inset-0 bg-slate-950/95 backdrop-blur-lg"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-
-            {/* Menu Content */}
-            <motion.div
-              className="relative h-full flex flex-col items-center justify-center gap-8"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {navItems.map((item, index) => (
-                <motion.div
+      {/* Mobile Menu - full screen overlay with animation */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-50 md:hidden bg-slate-950 flex flex-col items-center justify-center animate-fadeIn"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          {/* Menu items with staggered animation */}
+          <div className="flex flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
+            {navItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <Button
                   key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Button
-                    variant="ghost"
-                    size="lg"
-                    className={`text-2xl ${
-                      activeSection === item.id
-                        ? 'text-indigo-400'
-                        : 'text-gray-300 hover:text-cyan-400'
+                  variant="ghost"
+                  size="lg"
+                  className={`text-xl sm:text-2xl flex items-center gap-3 sm:gap-4 px-6 sm:px-8 py-4 sm:py-6 rounded-2xl transition-all duration-300 animate-slideUp ${activeSection === item.id
+                    ? 'text-cyan-400 bg-indigo-500/20 scale-105'
+                    : 'text-gray-300 hover:text-cyan-400 hover:bg-indigo-500/10 hover:scale-105'
                     }`}
-                    onClick={() => handleNavClick(item.id)}
-                  >
-                    {item.label}
-                  </Button>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  style={{ animationDelay: `${index * 80}ms` }}
+                  onClick={() => handleNavClick(item.id)}
+                >
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </div>
+          <p className="absolute bottom-8 text-gray-500 text-sm animate-fadeIn" style={{ animationDelay: '400ms' }}>
+            Tap anywhere to close
+          </p>
+        </div>
+      )}
     </>
   );
 }
+
+export default memo(Header);
