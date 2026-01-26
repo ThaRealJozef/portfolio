@@ -57,9 +57,15 @@ function useNetwork() {
   const [network, setNetwork] = useState<{ type: string; speed?: number; effectiveType?: string } | null>(null);
 
   useEffect(() => {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    // Cast to any because navigator.connection is experimental/not in all TS definitions
+    const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
 
     const updateNetwork = () => {
+      if (navigator.onLine === false) {
+        setNetwork(null);
+        return;
+      }
+
       if (conn) {
         const type = conn.type || conn.effectiveType || 'UNKNOWN';
         setNetwork({
@@ -67,15 +73,27 @@ function useNetwork() {
           speed: conn.downlink,
           effectiveType: conn.effectiveType,
         });
+      } else {
+        // Fallback for browsers without Network Information API
+        setNetwork({
+          type: 'WIFI_LINK', // Default to looking like a cool connection
+          speed: 100,
+          effectiveType: '4g',
+        });
       }
     };
 
+    updateNetwork();
+
+    window.addEventListener('online', updateNetwork);
+    window.addEventListener('offline', updateNetwork);
     if (conn) {
-      updateNetwork();
       conn.addEventListener('change', updateNetwork);
     }
 
     return () => {
+      window.removeEventListener('online', updateNetwork);
+      window.removeEventListener('offline', updateNetwork);
       if (conn) {
         conn.removeEventListener('change', updateNetwork);
       }
