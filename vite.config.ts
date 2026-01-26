@@ -4,8 +4,8 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  base: '/portfolio/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/portfolio/' : '/',
   server: {
     host: true,
   },
@@ -20,4 +20,4 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
   },
-});
+}));
