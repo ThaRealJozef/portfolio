@@ -1,162 +1,294 @@
 import { Button } from '@/components/ui/button';
-import { Github, ArrowDown, Sparkles } from 'lucide-react';
+import { Github, ArrowDown, Terminal, Shield, Wifi, Battery, Zap } from 'lucide-react';
 import { memo, useState, useEffect } from 'react';
-import ParticlesBackground from './ParticlesBackground';
 
 interface HeroProps {
-  title: string;
   bio: string;
   githubUrl: string;
   onScrollToProjects: () => void;
 }
 
-// Typing effect hook
-function useTypewriter(texts: string[], typingSpeed = 100, deletingSpeed = 50, pauseDuration = 2000) {
-  const [displayText, setDisplayText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
+// --- Hooks for System Status ---
+
+function useBattery() {
+  const [battery, setBattery] = useState<{ level: number; charging: boolean } | null>(null);
 
   useEffect(() => {
-    const currentText = texts[currentIndex];
+    // Battery API requires Secure Context (HTTPS) or localhost.
+    // Fallback for insecure contexts (HTTP LAN) to simulate active status
+    if (!navigator.getBattery) {
+      setBattery({ level: 0.85, charging: true });
+      return;
+    }
 
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (displayText.length < currentText.length) {
-          setDisplayText(currentText.slice(0, displayText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), pauseDuration);
-        }
-      } else {
-        if (displayText.length > 0) {
-          setDisplayText(currentText.slice(0, displayText.length - 1));
-        } else {
-          setIsDeleting(false);
-          setCurrentIndex((prev) => (prev + 1) % texts.length);
-        }
+    let batteryManager: BatteryManager | null = null;
+
+    const updateBattery = () => {
+      if (batteryManager) {
+        setBattery({
+          level: batteryManager.level,
+          charging: batteryManager.charging,
+        });
       }
-    }, isDeleting ? deletingSpeed : typingSpeed);
+    };
 
-    return () => clearTimeout(timeout);
-  }, [displayText, currentIndex, isDeleting, texts, typingSpeed, deletingSpeed, pauseDuration]);
+    navigator.getBattery().then((bm) => {
+      batteryManager = bm;
+      updateBattery();
+      bm.addEventListener('levelchange', updateBattery);
+      bm.addEventListener('chargingchange', updateBattery);
+    }).catch(() => {
+      // Fallback
+      setBattery({ level: 0.85, charging: true });
+    });
 
-  return displayText;
+    return () => {
+      if (batteryManager) {
+        batteryManager.removeEventListener('levelchange', updateBattery);
+        batteryManager.removeEventListener('chargingchange', updateBattery);
+      }
+    };
+  }, []);
+
+  return battery;
 }
 
-function Hero({ title, bio, githubUrl, onScrollToProjects }: HeroProps) {
-  const roles = [
-    'App Developer',
-    'Cybersecurity Enthusiast',
-    'Problem Solver',
-    'Tech Explorer',
-  ];
+function useNetwork() {
+  const [network, setNetwork] = useState<{ type: string; speed?: number; effectiveType?: string } | null>(null);
 
-  const typedRole = useTypewriter(roles, 80, 40, 2500);
+  useEffect(() => {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+    const updateNetwork = () => {
+      if (conn) {
+        const type = conn.type || conn.effectiveType || 'UNKNOWN';
+        setNetwork({
+          type: type.toUpperCase(),
+          speed: conn.downlink,
+          effectiveType: conn.effectiveType,
+        });
+      }
+    };
+
+    if (conn) {
+      updateNetwork();
+      conn.addEventListener('change', updateNetwork);
+    }
+
+    return () => {
+      if (conn) {
+        conn.removeEventListener('change', updateNetwork);
+      }
+    };
+  }, []);
+
+  return network;
+}
+
+// Simulated scrambling hook
+function useScramble(text: string, active: boolean = true) {
+  const [display, setDisplay] = useState(text);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_@#$%&*';
+
+  useEffect(() => {
+    if (!active) {
+      setDisplay(text);
+      return;
+    }
+
+    let iterations = 0;
+    const interval = setInterval(() => {
+      setDisplay(
+        text
+          .split('')
+          .map((char, index) => {
+            if (index < iterations) return char;
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join('')
+      );
+
+      if (iterations >= text.length) clearInterval(interval);
+      iterations += 1 / 2; // Speed of decoding
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [text, active]);
+
+  return display;
+}
+
+function Hero({ bio, githubUrl, onScrollToProjects }: HeroProps) {
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
+  const battery = useBattery();
+  const network = useNetwork();
+
+  // Simulated SSID logic
+  const [ssid, setSsid] = useState('SCANNING...');
+
+  useEffect(() => {
+    if (network?.type === 'WIFI' || network?.type === 'WIFI_LINK' || network?.effectiveType === '4g') {
+      // Simulate finding a "Target" network
+      const fakeSSIDs = ['SECURE_LINK_V5', 'PROXY_NODE_01', 'TARGET_NET', 'HIDDEN_UPLINK'];
+      const finalSSID = fakeSSIDs[Math.floor(Math.random() * fakeSSIDs.length)];
+      setSsid(finalSSID);
+    }
+  }, [network]);
+
+  const scrambledSSID = useScramble(ssid, true);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section id="home" className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 pt-20">
-      <ParticlesBackground />
+    <div className="relative w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-      {/* Gradient orbs with soft blur */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/30 rounded-full animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-cyan-500/30 rounded-full animate-blob animation-delay-2000" />
-      </div>
+      {/* Left Column: Operator Interface */}
+      <div className="lg:col-span-8 flex flex-col gap-8 relative z-10">
 
-      <div className="relative z-10 text-center space-y-8 px-6 max-w-4xl opacity-0 animate-in">
-        <div className="space-y-6">
-          {/* Status badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-full mb-4">
-            <span className="w-2 h-2 bg-green-400 rounded-full" />
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            <span className="text-sm text-indigo-300">Available for opportunities</span>
+        {/* Status Bar */}
+        <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-6 text-[10px] sm:text-xs font-mono text-cyber-muted tracking-wider border-b border-cyber-gray/30 pb-4 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyber-red animate-pulse rounded-none" />
+            <span><span className="sm:hidden">SYS</span><span className="hidden sm:inline">sys_OK</span></span>
           </div>
 
-          <p className="text-xl md:text-3xl text-gray-400 font-light">
-            Hey there! I'm
-          </p>
-
-          {/* Name with gradient */}
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold bg-gradient-to-r from-cyan-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent leading-tight">
-              Youssef Jrhider
-            </h1>
-            <div className="flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl">
-              <span className="w-6 md:w-8 h-px bg-gradient-to-r from-transparent to-indigo-500" />
-              <span className="text-indigo-400 font-light italic">aka</span>
-              <span className="text-cyan-300 font-semibold tracking-wide">Jozef</span>
-              <span className="w-6 md:w-8 h-px bg-gradient-to-l from-transparent to-cyan-500" />
-            </div>
+          {/* Network Status */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0" title={network?.speed ? `${network.speed} Mbps` : 'Network Status'}>
+            <Wifi className={`w-3 h-3 ${network ? 'text-cyber-text' : 'text-cyber-muted'}`} />
+            <span>
+              {network ? (
+                ['WIFI', 'WIFI_LINK', '4G'].includes(network.type) ? scrambledSSID : `NET_${network.type}`
+              ) : 'OFFLINE'}
+            </span>
           </div>
 
-          {/* Typewriter effect for role */}
-          <div className="text-base sm:text-xl md:text-2xl text-gray-300 font-light h-8 flex items-center justify-center gap-1">
-            <span className="text-cyan-400">&lt;</span>
-            <span>{typedRole}</span>
-            <span className="w-0.5 h-5 md:h-6 bg-cyan-400 ml-1 animate-blink" />
-            <span className="text-cyan-400">/&gt;</span>
+          {/* Battery Status */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {battery?.charging ? (
+              <Zap className="w-3 h-3 text-yellow-500 animate-pulse" />
+            ) : (
+              <Battery className={`w-3 h-3 ${battery && battery.level < 0.2 ? 'text-red-500 animate-pulse' : 'text-cyber-muted'}`} />
+            )}
+            <span>
+              {battery ? `${Math.round(battery.level * 100)}%` : 'PWR_N/A'}
+            </span>
           </div>
 
-          <p className="text-base md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed px-2">
+          <div className="ml-auto text-cyber-red whitespace-nowrap shrink-0 pl-2">
+            {time}
+          </div>
+        </div>
+
+        {/* Main Title Area */}
+        <div className="space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyber-red/10 border border-cyber-red/30 text-cyber-red text-xs font-mono tracking-widest">
+            <Terminal className="w-3 h-3" />
+            <span>INITIATING ROOT ACCESS...</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-cyber-text leading-[0.9]">
+            RED TEAM<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-red via-red-500 to-cyber-muted animate-glitch block mt-2">
+              OPERATOR
+            </span>
+          </h1>
+
+          <div className="flex items-center gap-4 text-xl sm:text-2xl font-mono text-cyber-muted">
+            <span>&gt; App_Dev</span>
+            <span className="text-cyber-gray">|</span>
+            <span>&gt; Cyber_Sec</span>
+          </div>
+        </div>
+
+        {/* Bio Terminal */}
+        <div className="p-6 border-l-2 border-cyber-red/50 bg-cyber-gray/10 font-mono text-sm md:text-base text-cyber-muted leading-relaxed max-w-2xl relative group">
+          <div className="absolute -left-[3px] top-0 h-8 w-[4px] bg-cyber-red" />
+          <p className="group-hover:text-cyber-text transition-colors duration-300">
+            <span className="text-cyber-red mr-2">$</span>
             {bio}
+            <span className="animate-blink inline-block w-2 h-4 bg-cyber-red ml-1 align-middle" />
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full px-4 sm:px-0">
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Button
             size="lg"
-            className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-700 hover:to-indigo-700 text-white shadow-lg shadow-indigo-500/50 transition-all duration-200 hover:scale-105 active:scale-95"
+            className="bg-cyber-red text-black hover:bg-red-500 hover:text-white font-bold tracking-wider rounded-none border border-transparent hover:border-cyber-red/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]"
             onClick={onScrollToProjects}
           >
-            <span className="flex items-center justify-center">
-              View My Work
-              <ArrowDown className="ml-2 h-4 w-4" />
+            <span className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              DEPLOY MISSION
             </span>
           </Button>
 
           <Button
             size="lg"
             variant="outline"
-            className="w-full sm:w-auto border-indigo-400 text-indigo-300 hover:bg-indigo-950/50 shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"
+            className="border-cyber-gray/50 text-cyber-text hover:bg-cyber-red/10 hover:border-cyber-red/50 hover:text-cyber-red font-mono rounded-none transition-all duration-300"
             asChild
           >
-            <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+            <a href={githubUrl} target="_blank" rel="noopener noreferrer">
               <Github className="mr-2 h-4 w-4" />
-              GitHub Profile
+              ACCESS REPO
             </a>
           </Button>
         </div>
+
+        {/* Scroll Hint - Mobile In-Flow */}
+        <div
+          className="flex md:hidden items-center gap-3 text-cyber-muted/50 font-mono text-xs tracking-widest cursor-pointer hover:text-cyber-red transition-colors pt-8"
+          onClick={onScrollToProjects}
+        >
+          <ArrowDown className="w-4 h-4 animate-bounce" />
+          SCROLL_TO_ACKNOWLEDGE
+        </div>
       </div>
 
-      {/* Scroll indicator - different for desktop and mobile */}
+      {/* Right Column: Decorative Data Viz */}
+      <div className="hidden lg:col-span-4 lg:flex flex-col gap-4 border border-cyber-gray/20 p-4 bg-cyber-black/50 ml-auto w-full relative">
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-cyber-red" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyber-red" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-cyber-red" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-cyber-red" />
+
+        <div className="h-64 relative overflow-hidden bg-cyber-dark border border-cyber-gray/10">
+          <div className="absolute inset-x-0 h-[1px] bg-cyber-red/50 animate-scanline w-full" />
+          <div className="p-4 font-mono text-xs text-cyber-muted space-y-2 opacity-70">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex justify-between">
+                <span>0x{Math.random().toString(16).slice(2, 6).toUpperCase()}</span>
+                <span className="text-cyber-red/50">{Math.random() > 0.5 ? 'ENCRYPTED' : 'OPEN'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 border border-cyber-gray/20 bg-cyber-gray/5">
+            <div className="text-[10px] text-cyber-muted uppercase mb-1">Packet Loss</div>
+            <div className="text-2xl font-mono text-cyber-red">0.0%</div>
+          </div>
+          <div className="p-4 border border-cyber-gray/20 bg-cyber-gray/5">
+            <div className="text-[10px] text-cyber-muted uppercase mb-1">Latency</div>
+            <div className="text-2xl font-mono text-cyber-text">12ms</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scroll Hint - Desktop Absolute */}
       <div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
+        className="hidden md:flex absolute bottom-10 left-6 items-center gap-3 text-cyber-muted/50 font-mono text-xs tracking-widest cursor-pointer hover:text-cyber-red transition-colors"
         onClick={onScrollToProjects}
       >
-        {/* Desktop: Mouse scroll indicator */}
-        <div className="hidden md:flex flex-col items-center gap-2 animate-float">
-          <span className="text-xs text-gray-500 uppercase tracking-widest">Scroll</span>
-          <div className="w-6 h-10 border-2 border-indigo-400/50 rounded-full flex justify-center pt-2">
-            <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-scroll-dot" />
-          </div>
-        </div>
-
-        {/* Mobile: Swipe up indicator with bouncing chevrons */}
-        <div className="flex md:hidden flex-col items-center gap-1 animate-bounce">
-          <span className="text-xs text-gray-500 uppercase tracking-widest">Swipe Up</span>
-          <div className="flex flex-col items-center -space-y-1">
-            <svg className="w-5 h-5 text-indigo-400 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-            <svg className="w-5 h-5 text-indigo-400 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-            <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-          </div>
-        </div>
+        <ArrowDown className="w-4 h-4 animate-bounce" />
+        SCROLL_TO_ACKNOWLEDGE
       </div>
-    </section>
+    </div>
   );
 }
 

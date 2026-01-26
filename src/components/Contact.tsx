@@ -1,6 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Mail, Twitter, Heart, Sparkles, Send } from 'lucide-react';
+import { Github, Mail, Twitter, Send, Terminal, ShieldAlert } from 'lucide-react';
 import { memo } from 'react';
 
 interface ContactProps {
@@ -13,115 +12,95 @@ function Contact({ githubUrl, email, twitter }: ContactProps) {
   const contactMethods = [
     {
       icon: Mail,
-      title: 'Email',
-      description: 'Drop me a message',
+      title: 'ENCRYPTED_MAIL',
       value: email,
       href: `mailto:${email}`,
-      color: 'from-cyan-500 to-blue-600',
+      color: 'text-cyber-red',
     },
     {
       icon: Github,
-      title: 'GitHub',
-      description: 'Check out my repositories',
+      title: 'GIT_REPO',
       value: githubUrl.replace('https://github.com/', '@'),
       href: githubUrl,
-      color: 'from-indigo-500 to-violet-600',
+      color: 'text-cyber-text',
     },
     {
       icon: Twitter,
-      title: 'Twitter / X',
-      description: 'Follow me on X',
+      title: 'COMMS_relay',
       value: '@tharealjozef',
       href: twitter,
-      color: 'from-violet-500 to-purple-600',
+      color: 'text-cyber-text',
     },
   ];
 
   return (
-    <section id="contact" className="py-16 md:py-24 px-4 md:px-6 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 relative overflow-visible">
-      {/* Background orbs with soft blur */}
-      <div className="absolute top-20 right-20 w-72 h-72 bg-indigo-500/20 rounded-full animate-blob" />
-      <div className="absolute bottom-20 left-20 w-72 h-72 bg-cyan-500/20 rounded-full animate-blob animation-delay-2000" />
-
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="text-center mb-10 md:mb-16 opacity-0 animate-in">
-          <div className="inline-block mb-4">
-            <div className="px-3 md:px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-full inline-flex items-center gap-2">
-              <Send className="w-4 h-4 text-indigo-400" />
-              <span className="text-sm text-indigo-300">Get In Touch</span>
-            </div>
-          </div>
-
-          <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-cyan-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            Let's Connect
-          </h2>
-          <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto px-2">
-            Feel free to reach out for collaborations or just a friendly chat
-          </p>
+    <div className="max-w-4xl mx-auto px-6">
+      <div className="text-center mb-16">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyber-red/10 border border-cyber-red/30 text-cyber-red text-xs font-mono tracking-widest mb-4">
+          <ShieldAlert className="w-3 h-3 animate-pulse" />
+          <span>SECURE_CONNECTION_ESTABLISHED</span>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {contactMethods.map((method, index) => {
-            const IconComponent = method.icon;
-            return (
-              <div
-                key={method.title}
-                className="opacity-0 animate-in hover-lift"
-                style={{ animationDelay: `${200 + index * 100}ms` }}
-              >
-                <Card className="glass-card hover:border-indigo-500/50 transition-all duration-300 group relative overflow-hidden h-full">
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${method.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-
-                  <CardHeader className="relative z-10">
-                    <CardTitle className="flex items-center gap-3">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${method.color} shadow-lg group-hover:rotate-12 transition-transform duration-300`}>
-                        <IconComponent className="w-6 h-6 text-white" />
-                      </div>
-                      <span className="text-gray-100 group-hover:text-cyan-300 transition-colors">
-                        {method.title}
-                      </span>
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      {method.description}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="relative z-10">
-                    <Button
-                      variant="outline"
-                      className="w-full border-indigo-500/50 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-400 transition-all"
-                      asChild
-                    >
-                      <a
-                        href={method.href}
-                        target={method.title !== 'Email' ? '_blank' : undefined}
-                        rel={method.title !== 'Email' ? 'noopener noreferrer' : undefined}
-                      >
-                        {method.value}
-                      </a>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Footer */}
-        <div className="mt-20 text-center opacity-0 animate-in" style={{ animationDelay: '600ms' }}>
-          <div className="inline-flex items-center gap-2 text-gray-500 text-sm">
-            <span>Made with</span>
-            <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
-            <span>by Jozef</span>
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-          </div>
-          <p className="text-gray-600 text-xs mt-2">
-            © {new Date().getFullYear()} ThaRealJozef. All rights reserved.
-          </p>
-        </div>
+        <h2 className="text-4xl md:text-5xl font-black text-cyber-text tracking-tighter mb-4">
+          ESTABLISH_UPLINK
+        </h2>
+        <p className="font-mono text-cyber-muted text-sm max-w-xl mx-auto">
+          // INITIATE HANDSHAKE PROTOCOL. TRANSMISSION LINES OPEN.
+          <br />// WAITING FOR INPUT...
+        </p>
       </div>
-    </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {contactMethods.map((method) => {
+          const Icon = method.icon;
+          return (
+            <div key={method.title} className="group relative">
+              <div className="absolute inset-0 bg-cyber-red/5 translate-x-1 translate-y-1 -z-10 transition-transform group-hover:translate-x-2 group-hover:translate-y-2 duration-300" />
+
+              <a
+                href={method.href}
+                target={method.title !== 'ENCRYPTED_MAIL' ? '_blank' : undefined}
+                rel="noopener noreferrer"
+                className="block h-full border border-cyber-gray/30 bg-cyber-black p-6 hover:border-cyber-red/50 transition-colors duration-300"
+              >
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="p-3 bg-cyber-dark border border-cyber-gray/20 rounded-none group-hover:border-cyber-red/30 transition-colors">
+                    <Icon className={`w-6 h-6 ${method.color}`} />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="font-mono text-xs text-cyber-muted uppercase tracking-wider">
+                      {method.title}
+                    </div>
+                    <div className="font-mono text-sm text-cyber-text group-hover:text-cyber-red transition-colors">
+                      {method.value}
+                    </div>
+                  </div>
+
+                  <div className="w-full mt-2 pt-4 border-t border-cyber-gray/10 flex justify-center">
+                    <span className="text-[10px] font-mono text-cyber-muted/50 group-hover:text-cyber-red/70 flex items-center gap-1 uppercase tracking-widest transition-colors">
+                      Connect <Terminal className="w-2 h-2" />
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-16 text-center">
+        <Button
+          size="lg"
+          className="bg-cyber-red text-black hover:bg-red-500 hover:text-white font-bold tracking-wider rounded-none border border-transparent hover:border-cyber-red/50 transition-all"
+          asChild
+        >
+          <a href={`mailto:${email}`}>
+            <Send className="mr-2 w-4 h-4" />
+            INITIATE_TRANSMISSION
+          </a>
+        </Button>
+      </div>
+    </div>
   );
 }
 

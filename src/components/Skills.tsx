@@ -1,7 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMemo, memo } from 'react';
-import { Code2, Layers, Wrench, Zap, Database, Globe } from 'lucide-react';
+import { Code2, Layers, Wrench, Zap, Database, Globe, Cpu, Terminal } from 'lucide-react';
 import projectsData from '@/data/projects.json';
 
 interface Project {
@@ -12,55 +10,33 @@ interface Project {
   link: string;
 }
 
-const SkillCard = memo(({ category, index }: { category: any; index: number }) => {
-  const IconComponent = category.icon;
+const SkillBar = memo(({ name }: { name: string }) => {
+  // Random "load" percentage for visual effect
+  const load = Math.floor(Math.random() * (98 - 70) + 70);
 
   return (
-    <div
-      className="opacity-0 animate-in hover-lift"
-      style={{ animationDelay: `${index * 150}ms` }}
-    >
-      <Card className="glass-card hover:border-indigo-500/50 transition-all duration-300 h-full relative overflow-hidden group">
-        {/* Gradient overlay on hover */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-
-        {/* Corner decoration */}
-        <div className="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-indigo-500/20 to-transparent rounded-full blur-2xl" />
-
-        <CardHeader className="relative z-10">
-          <CardTitle className="flex items-center gap-3">
-            <div className={`p-3 rounded-xl bg-gradient-to-br ${category.color} shadow-lg group-hover:rotate-12 transition-transform duration-300`}>
-              <IconComponent className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <span className="text-gray-100 text-lg font-semibold">{category.title}</span>
-              <p className="text-gray-500 text-xs mt-0.5">{category.skills.length} technologies</p>
-            </div>
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent className="relative z-10">
-          <div className="flex flex-wrap gap-2">
-            {category.skills.map((skill: string) => (
-              <Badge
-                key={skill}
-                variant="secondary"
-                className="bg-slate-700/50 text-gray-300 border border-slate-600/50 hover:bg-indigo-500/30 hover:text-indigo-200 hover:border-indigo-500/50 transition-colors duration-200 px-3 py-1.5 text-sm cursor-default"
-              >
-                {skill}
-              </Badge>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="group flex items-center gap-4 py-2 border-b border-cyber-gray/20 hover:bg-cyber-gray/5 transition-colors">
+      <div className="w-24 font-mono text-xs text-cyber-muted group-hover:text-cyber-red transition-colors">
+        {name}
+      </div>
+      <div className="flex-1 h-2 bg-cyber-dark relative overflow-hidden">
+        <div
+          className="h-full bg-cyber-muted/20 group-hover:bg-cyber-red/50 transition-colors duration-300"
+          style={{ width: `${load}%` }}
+        />
+        {/* Scan line effect */}
+        <div className="absolute inset-0 bg-cyber-red/20 w-[2px] animate-[scanline_2s_linear_infinite]" />
+      </div>
+      <div className="w-12 font-mono text-xs text-right text-cyber-muted group-hover:text-cyber-text">
+        {load}%
+      </div>
     </div>
   );
 });
 
-SkillCard.displayName = 'SkillCard';
+SkillBar.displayName = 'SkillBar';
 
 function Skills() {
-  // Extract skills from projects data
   const skills = useMemo(() => {
     const projects: Project[] = projectsData;
     const languagesSet = new Set<string>();
@@ -77,7 +53,6 @@ function Skills() {
     };
   }, []);
 
-  // Categorize skills
   const programmingLanguages = skills.languages.filter(lang =>
     ['JavaScript', 'TypeScript', 'Python', 'Java', 'C', 'C++', 'C#', 'Go', 'Rust', 'Swift', 'Kotlin', 'Ruby', 'PHP', 'Dart', 'PowerShell', 'JSON'].includes(lang)
   );
@@ -96,85 +71,74 @@ function Skills() {
 
   const skillCategories = [
     {
-      title: 'Programming Languages',
+      title: 'LANGUAGES & PROTOCOLS',
       icon: Code2,
       skills: programmingLanguages.length > 0 ? programmingLanguages : ['JavaScript', 'TypeScript', 'Python', 'Java'],
-      color: 'from-cyan-500 to-blue-600',
     },
     {
-      title: 'Web & Frameworks',
+      title: 'FRAMEWORKS & LIBS',
       icon: Globe,
       skills: webTechnologies.length > 0 ? webTechnologies.slice(0, 8) : ['React', 'Node.js', 'Tailwind CSS', 'Vite'],
-      color: 'from-indigo-500 to-violet-600',
     },
     {
-      title: 'Tools & Technologies',
+      title: 'SYSTEM TOOLS',
       icon: Wrench,
       skills: tools.length > 0 ? tools.slice(0, 8) : ['Git', 'Firebase', 'Docker', 'APIs'],
-      color: 'from-violet-500 to-purple-600',
     },
-  ];
-
-  // Skill highlights
-  const highlights = [
-    { icon: Zap, label: 'Fast Learner', color: 'text-yellow-400' },
-    { icon: Database, label: 'Database Design', color: 'text-cyan-400' },
-    { icon: Layers, label: 'Full Stack', color: 'text-indigo-400' },
   ];
 
   return (
-    <section id="skills" className="py-16 md:py-24 px-4 md:px-6 pb-32 md:pb-24 bg-gradient-to-br from-slate-800 via-indigo-900/20 to-slate-900 relative overflow-hidden">
-      {/* Background orbs with soft blur */}
-      <div className="absolute top-20 right-20 w-72 h-72 bg-indigo-500/20 rounded-full animate-blob" />
-      <div className="absolute bottom-20 left-20 w-72 h-72 bg-cyan-500/20 rounded-full animate-blob animation-delay-2000" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-10 md:mb-16 opacity-0 animate-in">
-          <div className="inline-block mb-4">
-            <div className="px-3 md:px-4 py-2 border border-indigo-500/30 bg-indigo-500/10 rounded-full inline-flex items-center gap-2">
-              <Layers className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs md:text-sm text-indigo-300">Tech Stack from Projects</span>
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="flex flex-col md:flex-row gap-12">
+        {/* Header Column */}
+        <div className="md:w-1/3 space-y-8">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyber-red/10 border border-cyber-red/30 text-cyber-red text-xs font-mono tracking-widest mb-4">
+              <Cpu className="w-3 h-3" />
+              <span>SYSTEM_DIAGNOSTICS</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-black text-cyber-text tracking-tighter mb-4">
+              SKILL_SET
+            </h2>
+            <p className="font-mono text-cyber-muted text-sm leading-relaxed border-l-2 border-cyber-gray/30 pl-4">
+              // ANALYZING TECHNOLOGICAL CAPABILITIES.<br />
+              // PROFICIENCY LEVELS DETECTED.<br />
+              // OPTIMIZED FOR FULL-STACK OPERATIONS.
+            </p>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-cyan-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            Skills & Technologies
-          </h2>
-          <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto px-2">
-            Technologies I've used and mastered across my projects
-          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 bg-cyber-gray/5 border border-cyber-gray/20">
+              <Zap className="w-5 h-5 text-yellow-500 mb-2" />
+              <div className="text-xs font-mono text-cyber-muted">LEARNING_RATE</div>
+              <div className="text-xl font-bold text-cyber-text">RAPID</div>
+            </div>
+            <div className="p-4 bg-cyber-gray/5 border border-cyber-gray/20">
+              <Database className="w-5 h-5 text-cyber-red mb-2" />
+              <div className="text-xs font-mono text-cyber-muted">DB_ARCH</div>
+              <div className="text-xl font-bold text-cyber-text">OPTIMIZED</div>
+            </div>
+          </div>
         </div>
 
-        {/* Skill highlights */}
-        <div className="flex flex-wrap justify-center gap-3 md:gap-6 mb-8 md:mb-12 opacity-0 animate-in" style={{ animationDelay: '200ms' }}>
-          {highlights.map((item) => {
-            const IconComponent = item.icon;
-            return (
-              <div
-                key={item.label}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-full backdrop-blur-sm hover:scale-105 transition-transform"
-              >
-                <IconComponent className={`w-4 h-4 ${item.color}`} />
-                <span className="text-sm text-gray-300">{item.label}</span>
+        {/* Skills Grid */}
+        <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {skillCategories.map((category) => (
+            <div key={category.title} className="space-y-4">
+              <div className="flex items-center gap-2 border-b-2 border-cyber-red pb-2">
+                <category.icon className="w-4 h-4 text-cyber-red" />
+                <h3 className="font-mono font-bold text-cyber-text text-sm tracking-wider">{category.title}</h3>
               </div>
-            );
-          })}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {skillCategories.map((category, index) => (
-            <SkillCard key={category.title} category={category} index={index} />
+              <div className="space-y-1">
+                {category.skills.map((skill) => (
+                  <SkillBar key={skill} name={skill} />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
-
-        <div className="mt-16 text-center opacity-0 animate-in" style={{ animationDelay: '500ms' }}>
-          <p className="text-gray-400 text-lg flex items-center justify-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-400" />
-            Always learning and exploring new technologies
-          </p>
-        </div>
       </div>
-    </section>
+    </div>
   );
 }
 
