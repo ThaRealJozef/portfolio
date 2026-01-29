@@ -55,5 +55,20 @@
       "Firestore Database",
       "Cloud Image Hosting (IMGBB)"
     ]
+  },
+  {
+    "name": "DistroKV",
+    "description": "A Distributed Key-Value Store built from scratch in Go. Features a custom Raft Consensus implementation, LSM Tree storage engine, and gRPC communication.",
+    "link": "https://github.com/ThaRealJozef/DistroKV",
+    "languages": [
+      "Go"
+    ],
+    "technologies": [
+      "Distributed Systems",
+      "Raft Consensus",
+      "LSM Tree",
+      "gRPC",
+      "Protocol Buffers"
+    ]
   }
 ]
