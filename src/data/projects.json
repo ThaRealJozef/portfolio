@@ -1,40 +1,17 @@
 [
   {
-    "name": "Malware Detection System",
-    "description": "A machine learning-based system for detecting malware using advanced algorithms and pattern recognition.",
-    "link": "https://github.com/tharealjozef/malwaredetectionsystem",
+    "name": "DistroKV",
+    "description": "A Distributed Key-Value Store built from scratch in Go. Features a custom Raft Consensus implementation, LSM Tree storage engine, and gRPC communication.",
+    "link": "https://github.com/ThaRealJozef/DistroKV",
     "languages": [
-      "Python"
+      "Go"
     ],
     "technologies": [
-      "Machine Learning",
-      "Cybersecurity",
-      "Malware Detection"
-    ]
-  },
-  {
-    "name": "News Articles Website",
-    "description": "A collaborative university project for managing and displaying news articles with a modern interface.",
-    "link": "https://github.com/KaiBelmo/newsArticle",
-    "languages": [
-      "JavaScript"
-    ],
-    "technologies": [
-      "Web Development",
-      "University Project"
-    ]
-  },
-  {
-    "name": "Recipes Android App",
-    "description": "A beautiful Android recipe application with modern Material Design UI and an Offline Database",
-    "link": "https://github.com/ThaRealJozef/RecipeApp",
-    "languages": [
-      "Java"
-    ],
-    "technologies": [
-      "Android",
-      "Material Design",
-      "Room Database"
+      "Distributed Systems",
+      "Raft Consensus",
+      "LSM Tree",
+      "gRPC",
+      "Protocol Buffers"
     ]
   },
   {
@@ -57,18 +34,41 @@
     ]
   },
   {
-    "name": "DistroKV",
-    "description": "A Distributed Key-Value Store built from scratch in Go. Features a custom Raft Consensus implementation, LSM Tree storage engine, and gRPC communication.",
-    "link": "https://github.com/ThaRealJozef/DistroKV",
+    "name": "Malware Detection System",
+    "description": "A machine learning-based system for detecting malware using advanced algorithms and pattern recognition.",
+    "link": "https://github.com/tharealjozef/malwaredetectionsystem",
     "languages": [
-      "Go"
+      "Python"
     ],
     "technologies": [
-      "Distributed Systems",
-      "Raft Consensus",
-      "LSM Tree",
-      "gRPC",
-      "Protocol Buffers"
+      "Machine Learning",
+      "Cybersecurity",
+      "Malware Detection"
+    ]
+  },
+  {
+    "name": "Recipes Android App",
+    "description": "A beautiful Android recipe application with modern Material Design UI and an Offline Database",
+    "link": "https://github.com/ThaRealJozef/RecipeApp",
+    "languages": [
+      "Java"
+    ],
+    "technologies": [
+      "Android",
+      "Material Design",
+      "Room Database"
+    ]
+  },
+  {
+    "name": "News Articles Website",
+    "description": "A collaborative university project for managing and displaying news articles with a modern interface.",
+    "link": "https://github.com/KaiBelmo/newsArticle",
+    "languages": [
+      "JavaScript"
+    ],
+    "technologies": [
+      "Web Development",
+      "University Project"
     ]
   }
 ]
