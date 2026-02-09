@@ -1,6 +1,6 @@
 import { useState, useEffect, memo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Terminal, Code2, Cpu, Shield, Mail } from 'lucide-react';
+import { Menu, X, Terminal, Code2, Cpu, Shield, Mail, FileDown, LucideIcon } from 'lucide-react';
 
 interface HeaderProps {
   onNavigate: (sectionId: string) => void;
@@ -52,15 +52,27 @@ function Header({ onNavigate }: HeaderProps) {
     };
   }, []);
 
-  const navItems = [
+  interface NavItem {
+    id: string;
+    label: string;
+    icon: LucideIcon;
+    isDownload?: boolean;
+  }
+
+  const navItems: NavItem[] = [
     { id: 'home', label: '~/home', icon: Terminal },
     { id: 'projects', label: './projects', icon: Code2 },
     { id: 'skills', label: './skills', icon: Cpu },
     { id: 'education', label: './log', icon: Shield },
     { id: 'contact', label: './contact', icon: Mail },
+    { id: 'cv', label: './resume', icon: FileDown, isDownload: true },
   ];
 
-  const handleNavClick = (sectionId: string) => {
+  const handleNavClick = (sectionId: string, isDownload?: boolean) => {
+    if (isDownload) {
+      window.open('/CV.pdf', '_blank');
+      return;
+    }
     onNavigate(sectionId);
     setIsMobileMenuOpen(false);
   };
@@ -69,8 +81,8 @@ function Header({ onNavigate }: HeaderProps) {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 font-mono ${isScrolled
-            ? 'bg-cyber-black/90 border-b border-cyber-red/20 backdrop-blur-sm py-4'
-            : 'bg-transparent py-6'
+          ? 'bg-cyber-black/90 border-b border-cyber-red/20 backdrop-blur-sm py-4'
+          : 'bg-transparent py-6'
           }`}
       >
         <nav className="max-w-7xl mx-auto px-6">
@@ -102,10 +114,10 @@ function Header({ onNavigate }: HeaderProps) {
                     key={item.id}
                     variant="ghost"
                     className={`relative px-4 py-2 text-sm transition-all duration-200 border border-transparent ${isActive
-                        ? 'text-cyber-red border-cyber-red/20 bg-cyber-red/5'
-                        : 'text-cyber-muted hover:text-cyber-text hover:border-cyber-muted/20'
+                      ? 'text-cyber-red border-cyber-red/20 bg-cyber-red/5'
+                      : 'text-cyber-muted hover:text-cyber-text hover:border-cyber-muted/20'
                       }`}
-                    onClick={() => handleNavClick(item.id)}
+                    onClick={() => handleNavClick(item.id, item.isDownload)}
                   >
                     <span className="flex items-center gap-2">
                       {item.label}
@@ -141,11 +153,11 @@ function Header({ onNavigate }: HeaderProps) {
                   key={item.id}
                   variant="ghost"
                   className={`text-xl flex items-center gap-4 w-full justify-start p-4 hover:bg-cyber-red/10 border-l-2 transition-all ${activeSection === item.id
-                      ? 'text-cyber-red border-cyber-red'
-                      : 'text-cyber-muted border-transparent hover:text-cyber-text hover:border-cyber-muted'
+                    ? 'text-cyber-red border-cyber-red'
+                    : 'text-cyber-muted border-transparent hover:text-cyber-text hover:border-cyber-muted'
                     }`}
                   style={{ animationDelay: `${index * 50}ms` }}
-                  onClick={() => handleNavClick(item.id)}
+                  onClick={() => handleNavClick(item.id, item.isDownload)}
                 >
                   <Icon className="w-5 h-5" />
                   {item.label}

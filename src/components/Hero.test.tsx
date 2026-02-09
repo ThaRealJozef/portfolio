@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 
 // Mock Lucide icons
 vi.mock('lucide-react', async (importOriginal) => {
-    const actual = await importOriginal() as any;
+    const actual = await importOriginal<typeof import('lucide-react')>();
     return {
         ...actual,
         // Add specific mocks if needed, or just let them render as default SVG

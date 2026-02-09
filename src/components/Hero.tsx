@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Github, ArrowDown, Terminal, Shield, Wifi, Battery, Zap } from 'lucide-react';
+import { Github, ArrowDown, Terminal, Shield, Wifi, Battery, Zap, FileDown } from 'lucide-react';
 import { memo, useState, useEffect } from 'react';
 
 interface HeroProps {
@@ -58,7 +58,7 @@ function useNetwork() {
 
   useEffect(() => {
     // Cast to any because navigator.connection is experimental/not in all TS definitions
-    const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
     const updateNetwork = () => {
       if (navigator.onLine === false) {
@@ -253,6 +253,18 @@ function Hero({ bio, githubUrl, onScrollToProjects }: HeroProps) {
             <a href={githubUrl} target="_blank" rel="noopener noreferrer">
               <Github className="mr-2 h-4 w-4" />
               ACCESS REPO
+            </a>
+          </Button>
+
+          <Button
+            size="lg"
+            variant="outline"
+            className="border-cyber-red/50 text-cyber-red hover:bg-cyber-red/10 font-mono rounded-none transition-all duration-300 shadow-[0_0_10px_rgba(239,68,68,0.2)]"
+            asChild
+          >
+            <a href="/CV.pdf" download="CV_Jozef.pdf">
+              <FileDown className="mr-2 h-4 w-4" />
+              RESUME.exe
             </a>
           </Button>
         </div>
